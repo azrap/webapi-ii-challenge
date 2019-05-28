@@ -101,14 +101,30 @@ router.get('/:id/comments', async (req, res) =>{
 // ****** POSTS ********** //
 
 // create a new blogpost 
-router.post('/', (req, res) =>{
+router.post('/', async (req, res) => {
     try {
+      const post = await Posts.add(req.body);      
+
+        if(!req.body.contents || !req.body.title){
+
+            res.status(400).json({ errorMessage: "Please provide title and contents for the post."});
+            
+            return
+        }
+        else {
+            res.status(201).json(post);
+
+        }
+
+
+    } 
     
-
-    }
-
-    catch(err){
-        
+    catch (error) {
+      // log error to database
+      console.log(error);
+      res.status(500).json({
+        error: "There was an error while saving the post to the database" 
+      });
     }
 
 })
