@@ -147,17 +147,37 @@ router.delete('/:id', (req, res)=>{
 
 //***** UPDATE*****//
 
-//UPDATE post with specific ID
-router.put('/:id', (req, res)=>{
+//UPDATE post with specific ID:
+
+router.put('/:id', async (req, res)=>{
     //grab the id from the url
     try {
-    
+        const post = await Posts.update(req.params.id, req.body);
+        if (post) {
 
-    }
+            if(!req.body.contents || !req.body.title){
 
-    catch(err){
+                
+                return
+
+            }
+            else {
+                res.status(200).json(post);
+
+            }
+         
+        } 
         
-    }
+        else {
+          res.status(404).json({ message: "The post with the specified ID does not exist."});
+        }
+      } catch (error) {
+        // log error to database
+        console.log(error);
+        res.status(500).json({
+          message: 'Error updating the hub',
+        });
+      }
 
 })
 
