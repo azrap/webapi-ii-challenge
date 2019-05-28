@@ -1,4 +1,4 @@
-const db = require('./data/db.js');
+const Posts = require('./data/db.js');
 
 const express = require('express');
 
@@ -9,71 +9,45 @@ const router=express.Router();
 
 router.get('/', async (req, res)=>{
     try {
-
+        const posts= await Posts.find(req.query)
+        //not sure why we are using req.query?
+        res.status(200).json(posts);
     }
-    catch (error) {
-
-    }
-
-})
+    catch (err) {
+        // log error to database
+        console.log(err);
+        res.status(500).json({
+          error: 'The posts information could not be retrieved.',
+        });
+      }
+    });
 
 //GET the specific blog post id
 
-router.get('/:id', (req, res)=>{
+router.get('/:id', async (req, res)=> {
+    try {
 
-    //grab the id from the url
-    const { id } = req.params;
+    }
+
+    catch(err){
+
+    }
+
     
-    //the below returns all users with the specified id
-    db.findById(id)
-    //then we feed what was returned into .then
-    .then(user => {
-        if(user){
-            res.json(user)
-        }
-        else{
-            res.status(404).json({
-                success:false,
-                message:'The user with the specified ID does not exist.',
-            })
-        }
-    })
-    .catch(err => {
-        res.status(404).json({
-            success:false,
-            message
-        })
-    })
-
 })
 
 //GET the comments for the specific blog post id
 
 router.get('/:id/comments', (req, res)=>{
 
-    //grab the id from the url
-    const { id } = req.params;
+   try {
     
-    //the below returns all users with the specified id
-    db.findById(id)
-    //then we feed what was returned into .then
-    .then(user => {
-        if(user){
-            res.json(user)
-        }
-        else{
-            res.status(404).json({
-                success:false,
-                message:'The user with the specified ID does not exist.',
-            })
-        }
-    })
-    .catch(err => {
-        res.status(404).json({
-            success:false,
-            message
-        })
-    })
+
+    }
+
+    catch(err){
+        
+    }
 
 })
 
@@ -81,67 +55,28 @@ router.get('/:id/comments', (req, res)=>{
 
 // create a new blogpost 
 router.post('/', (req, res) =>{
-    //grab the id from the url
-    const user=req.body;
-    if(!user.name | !user.bio){
-        res.status(400).json({
-            success:false,
-            message:'Please provide name and bio for the user.'
-        })
-        return;
+    try {
+    
+
     }
-    db.insert(user)
-    .then(newUser => {
-        if(newUser){
-            res.status(201).json(newUser);
-        }
-        else{
-            res.status(500).json({
-                success:false,
-                message:"There was an error while saving the user to the database"
-            })
-            return
-        }
-    })
-    .catch(err => {
-        res.status(404).json({
-            success:false,
-            message
-        })
-    })
+
+    catch(err){
+        
+    }
 
 })
 
 // create comment for the blog post at specific id
 router.post('/:id/comments', (req, res) =>{
-    //grab the id from the url
-    const user=req.body;
-    if(!user.name | !user.bio){
-        res.status(400).json({
-            success:false,
-            message:'Please provide name and bio for the user.'
-        })
-        return;
+    try {
+    
+
     }
-    db.insert(user)
-    .then(newUser => {
-        if(newUser){
-            res.status(201).json(newUser);
-        }
-        else{
-            res.status(500).json({
-                success:false,
-                message:"There was an error while saving the user to the database"
-            })
-            return
-        }
-    })
-    .catch(err => {
-        res.status(404).json({
-            success:false,
-            message
-        })
-    })
+
+    catch(err){
+        
+    }
+   
 
 })
 
@@ -151,28 +86,14 @@ router.post('/:id/comments', (req, res) =>{
 router.delete('/:id', (req, res)=>{
 
     //grab the id from the url
-    const { id } = req.params;
+    try {
     
-    //the below returns all users with the user at specific id removed
-    db.remove(id)
-    //then we feed what was returned into .then
-    .then(deletedUser => {
-        if(deletedUser){
-            res.json(deletedUser)
-        }
-        else{
-            res.status(404).json({
-                success:false,
-                message:'The user with the specified ID does not exist.',
-            })
-        }
-    })
-    .catch(err => {
-        res.status(404).json({
-            success:false,
-            message
-        })
-    })
+
+    }
+
+    catch(err){
+        
+    }
 
 })
 
@@ -182,43 +103,14 @@ router.delete('/:id', (req, res)=>{
 //UPDATE post with specific ID
 router.put('/:id', (req, res)=>{
     //grab the id from the url
-    const { id } = req.params;
-    const user=req.body;
-    if (!user){
-        res.status(404).json({
-            success:false,
-            message:'The user with the specified ID does not exist.'
-        })
-        return;
+    try {
+    
 
     }
-    else if(!user.name | !user.bio){
-        res.status(400).json({
-            success:false,
-            message:'Please provide name and bio for the user.'
-        })
-        return;
+
+    catch(err){
+        
     }
-    
-    db.update(id,user)
-    .then(updatedUser => {
-        if(updatedUser){
-            res.status(200).json(updatedUser)
-        }
-        else{
-            res.status(500).json({
-                success:false,
-                message:'The user with the specified ID does not exist.',
-            })
-            return
-        }
-    })
-    .catch(err => {
-        res.status(500).json({
-            success:false,
-            message
-        })
-    })
 
 })
 
