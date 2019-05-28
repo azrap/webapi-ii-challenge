@@ -130,17 +130,24 @@ router.post('/:id/comments', (req, res) =>{
 //****** DELETE*****//
 
 //DELETE the post with the specific ID
-router.delete('/:id', (req, res)=>{
-
-    //grab the id from the url
+router.delete('/:id', async (req, res)=>{
     try {
-    
+        const count = await Posts.remove(req.params.id);
 
-    }
+        if (count > 0) {
+          res.status(200).json({ message: 'The post has been deleted' });
+        } 
+        else {
+          res.status(404).json({ message: "The post with the specified ID does not exist." });
+          return
+        }
 
-    catch(err){
-        
-    }
+      } catch (error) {
+        // log error to database
+        res.status(500).json({
+            error: 'The post could not be removed',
+        });
+      }
 
 })
 
@@ -148,18 +155,20 @@ router.delete('/:id', (req, res)=>{
 //***** UPDATE*****//
 
 //UPDATE post with specific ID:
+// CHECK THIS WITH SOLUTION CODE 
 
 router.put('/:id', async (req, res)=>{
     //grab the id from the url
     try {
         const post = await Posts.update(req.params.id, req.body);
+
         if (post) {
 
             if(!req.body.contents || !req.body.title){
 
+                res.status(400).json({ errorMessage: "Please provide title and contents for the post."});
                 
                 return
-
             }
             else {
                 res.status(200).json(post);
@@ -170,12 +179,14 @@ router.put('/:id', async (req, res)=>{
         
         else {
           res.status(404).json({ message: "The post with the specified ID does not exist."});
+          return
+
         }
       } catch (error) {
         // log error to database
-        console.log(error);
+        
         res.status(500).json({
-          message: 'Error updating the hub',
+            error: "The post information could not be modified.",
         });
       }
 
