@@ -23,30 +23,77 @@ router.get('/', async (req, res)=>{
     });
 
 //GET the specific blog post id
+//   - If the _post_ with the specified `id` is not found:
+//   - return HTTP status code `404` (Not Found).
+//   - return the following JSON object: `{ message: "The post with the specified ID does not exist." }`.
+
 
 router.get('/:id', async (req, res)=> {
     try {
+        const post = await Posts.findById(req.params.id);
+        if (post) {
+            res.status(200).json(post);
+          } else {
+            res.status(404).json({ message: "The post with the specified ID does not exist." });
+          }
+          return
 
     }
-
     catch(err){
-
+        res.status(404).json({
+            message: "The post with the specified ID does not exist." 
+          });
     }
 
     
 })
 
 //GET the comments for the specific blog post id
+// If the _post_ with the specified `id` is not found:
+//     - return HTTP status code `404` (Not Found).
+//     - return the following JSON object: `{ message: "The post with the specified ID does not exist." }`.
 
-router.get('/:id/comments', (req, res)=>{
+// - If there's an error in retrieving the _comments_ from the database:
+//     - cancel the request.
+//     - respond with HTTP status code `500`.
+//     - return the following JSON object: `{ error: "The comments information could not be retrieved." }`.
 
-   try {
-    
+router.get('/:id/comments', async (req, res) =>{
+
+    try {
+       const post = await Posts.findById(req.params.id);
+
+        if (post) {
+           
+            const comments = await Posts.findPostComments(req.params.id);
+            
+            if (comments) {
+
+                res.status(200).json(comments);
+
+             }
+            else {
+                res.status(500).json({ error: "The comments information could not be retrieved." });
+                
+                return
+
+            }
+            
+          } 
+          
+          else {
+              
+            res.status(404).json({ message: "The post with the specified ID does not exist." });
+
+            return
+            
+          }    
 
     }
-
     catch(err){
-        
+        res.status(404).json({
+            message: "The post with the specified ID does not exist." 
+          });
     }
 
 })
