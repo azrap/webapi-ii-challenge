@@ -103,7 +103,7 @@ router.get('/:id/comments', async (req, res) =>{
 // create a new blogpost 
 router.post('/', async (req, res) => {
     try {
-      const post = await Posts.add(req.body);      
+      const post = await Posts.insert(req.body);      
 
         if(!req.body.contents || !req.body.title){
 
@@ -113,9 +113,7 @@ router.post('/', async (req, res) => {
         }
         else {
             res.status(201).json(post);
-
         }
-
 
     } 
     
@@ -130,16 +128,35 @@ router.post('/', async (req, res) => {
 })
 
 // create comment for the blog post at specific id
-router.post('/:id/comments', (req, res) =>{
-    try {
-    
+router.post('/:id', async (req, res) => {
 
-    }
-
-    catch(err){
+    try { 
         
+         const post = await Posts.findById(req.params.id)
+
+        if (post) {
+            
+            const comment = await post.insertComment(req.body)
+        
+            if(!req.body.text){
+
+                res.status(400).json({ errorMessage: "Please provide text for the comment."});
+                
+                return
+            }
+            else {
+                res.status(201).json(comment);
+            }
+
+    } 
+    
+    catch (error) {
+      // log error to database
+      console.log(error);
+      res.status(500).json({
+        error: "There was an error while saving the comment to the database" 
+      });
     }
-   
 
 })
 
